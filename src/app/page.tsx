@@ -1798,7 +1798,7 @@ export default function HomePage() {
                   <span className="text-[10px] font-mono text-slate-400 uppercase tracking-widest block mb-1">
                     RESEARCH CURRICULUM
                   </span>
-                  <div className="font-bold text-slate-100 text-base">PP1 Research Project 2026</div>
+                  <div className="font-bold text-slate-100 text-base">Research Project</div>
                   <div className="text-xs text-slate-400 font-mono">Project Reference: R26-IT-ROAD-023</div>
                 </div>
               </div>
@@ -1820,7 +1820,7 @@ export default function HomePage() {
             />
             <div>
               <span className="font-bold text-slate-200">Road Inspectors</span>
-              <span className="text-slate-500 ml-2">© 2026 SLIIT PP1 Research Project</span>
+              <span className="text-slate-500 ml-2">© 2026 SLIIT Research Project</span>
             </div>
           </div>
 
