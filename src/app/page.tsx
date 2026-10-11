@@ -30,7 +30,14 @@ import {
   Award,
   Eye,
   Download,
-  ChevronLeft
+  ChevronLeft,
+  Search,
+  Copy,
+  Check,
+  Flame,
+  Thermometer,
+  SlidersHorizontal,
+  Play
 } from "lucide-react";
 
 function GithubIcon({ className = "w-4 h-4" }: { className?: string }) {
@@ -58,6 +65,25 @@ export default function HomePage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeModuleTab, setActiveModuleTab] = useState<number>(1);
   const [pipelineStep, setPipelineStep] = useState<number>(0);
+  const [scrollProgress, setScrollProgress] = useState<number>(0);
+
+  // Interactive AI Vision Inspector Playground State
+  const [inspectorView, setInspectorView] = useState<"raw" | "yolo" | "unet" | "depth">("yolo");
+
+  // Live Thermodynamic Asphalt & CIDA SCA/5 Cost Calculator State
+  const [calcArea, setCalcArea] = useState<number>(4.5);
+  const [calcDepth, setCalcDepth] = useState<number>(6.0);
+  const [calcDistance, setCalcDistance] = useState<number>(18);
+  const [calcAmbientTemp, setCalcAmbientTemp] = useState<number>(31);
+
+  // Document Filtering & Search
+  const [docFilter, setDocFilter] = useState<"all" | "papers" | "presentations" | "reports">("all");
+  const [docSearchQuery, setDocSearchQuery] = useState<string>("");
+
+  // Citation Modal State
+  const [citationModalOpen, setCitationModalOpen] = useState<boolean>(false);
+  const [citationCopied, setCitationCopied] = useState<boolean>(false);
+
   const [selectedDoc, setSelectedDoc] = useState<{
     title: string;
     subtitle: string;
@@ -65,8 +91,20 @@ export default function HomePage() {
     isImage?: boolean;
     images?: string[];
     badge?: string;
+    category?: "papers" | "presentations" | "reports";
   } | null>(null);
   const [activeSlideIndex, setActiveSlideIndex] = useState<number>(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+      if (totalHeight > 0) {
+        setScrollProgress(Math.min(100, Math.max(0, (window.scrollY / totalHeight) * 100)));
+      }
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -238,21 +276,27 @@ export default function HomePage() {
 
   return (
     <div className="flex-1 flex flex-col">
+      {/* Top Scroll Progress Bar */}
+      <div
+        className="fixed top-0 left-0 h-1 bg-gradient-to-r from-orange-500 via-amber-400 to-sky-400 z-[100] transition-all duration-75"
+        style={{ width: `${scrollProgress}%` }}
+      />
+
       {/* Navigation Bar */}
       <header className="fixed inset-x-0 top-0 z-50 h-16 transition-colors duration-300 bg-slate-950/80 backdrop-blur-md border-b border-orange-500/20">
         <div className="mx-auto flex h-full max-w-7xl items-center justify-between px-4 md:px-6">
-          <a href="#" className="flex items-center gap-3" aria-label="Road Inspector AI Home">
+          <a href="#" className="flex items-center gap-3" aria-label="Road Inspectors Home">
             <div className="relative w-9 h-9 rounded-full overflow-hidden border border-orange-500/40 p-0.5 bg-slate-900">
               <Image
                 src={getAssetUrl("/branding/logo_white.png")}
-                alt="Road Inspector AI Logo"
+                alt="Road Inspectors Logo"
                 width={36}
                 height={36}
                 className="object-contain"
               />
             </div>
             <span className="font-mono text-lg font-bold tracking-tight text-slate-100">
-              Road Inspector <span className="text-orange-500">AI</span>
+              Road <span className="text-orange-500">Inspectors</span>
             </span>
           </a>
 
@@ -271,16 +315,18 @@ export default function HomePage() {
               Research Modules
             </a>
             <a
-              href="#architecture"
-              className="rounded-full px-3.5 py-1.5 text-sm font-medium text-slate-300 transition-colors hover:bg-orange-500/10 hover:text-orange-400"
+              href="#gallery"
+              className="rounded-full px-3.5 py-1.5 text-sm font-medium text-slate-300 transition-colors hover:bg-orange-500/10 hover:text-orange-400 flex items-center gap-1"
             >
-              System Architecture
+              <Sparkles className="w-3.5 h-3.5 text-orange-400" />
+              <span>AI Inspector</span>
             </a>
             <a
-              href="#gallery"
-              className="rounded-full px-3.5 py-1.5 text-sm font-medium text-slate-300 transition-colors hover:bg-orange-500/10 hover:text-orange-400"
+              href="#calculator"
+              className="rounded-full px-3.5 py-1.5 text-sm font-medium text-slate-300 transition-colors hover:bg-orange-500/10 hover:text-orange-400 flex items-center gap-1"
             >
-              Gallery
+              <Calculator className="w-3.5 h-3.5 text-orange-400" />
+              <span>Cost Calculator</span>
             </a>
             <a
               href="#compliance"
@@ -1056,6 +1102,167 @@ export default function HomePage() {
               </p>
             </div>
 
+            {/* Interactive AI Perception & Depth Inspector Playground */}
+            <div className="glass-panel p-6 md:p-8 rounded-3xl border border-orange-500/30 mb-16 relative overflow-hidden bg-gradient-to-b from-slate-900/90 to-slate-950/90 shadow-2xl">
+              <div className="flex flex-wrap items-center justify-between gap-4 mb-6 pb-6 border-b border-slate-800">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-orange-500/10 border border-orange-500/30 flex items-center justify-center text-orange-400">
+                    <Camera className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl md:text-2xl font-extrabold text-slate-100 flex items-center gap-2">
+                      Interactive AI Vision & Depth Inspector
+                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-orange-500/20 text-orange-400 border border-orange-500/30">
+                        LIVE DEMO
+                      </span>
+                    </h3>
+                    <p className="text-xs text-slate-400 font-mono">
+                      Switch through active neural inference stages on a real Sri Lankan pavement defect sample
+                    </p>
+                  </div>
+                </div>
+
+                {/* View Switcher Tabs */}
+                <div className="flex flex-wrap items-center gap-2 bg-slate-950 p-1.5 rounded-2xl border border-slate-800">
+                  <button
+                    type="button"
+                    onClick={() => setInspectorView("raw")}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-mono font-semibold transition-all ${
+                      inspectorView === "raw"
+                        ? "bg-gradient-to-r from-orange-600 to-amber-600 text-white shadow-md shadow-orange-500/20"
+                        : "text-slate-400 hover:text-slate-200"
+                    }`}
+                  >
+                    1. Raw RGB Frame
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setInspectorView("yolo")}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-mono font-semibold transition-all ${
+                      inspectorView === "yolo"
+                        ? "bg-gradient-to-r from-orange-600 to-amber-600 text-white shadow-md shadow-orange-500/20"
+                        : "text-slate-400 hover:text-slate-200"
+                    }`}
+                  >
+                    2. YOLOv8 Detection
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setInspectorView("unet")}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-mono font-semibold transition-all ${
+                      inspectorView === "unet"
+                        ? "bg-gradient-to-r from-orange-600 to-amber-600 text-white shadow-md shadow-orange-500/20"
+                        : "text-slate-400 hover:text-slate-200"
+                    }`}
+                  >
+                    3. U-Net Mask
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setInspectorView("depth")}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-mono font-semibold transition-all ${
+                      inspectorView === "depth"
+                        ? "bg-gradient-to-r from-orange-600 to-amber-600 text-white shadow-md shadow-orange-500/20"
+                        : "text-slate-400 hover:text-slate-200"
+                    }`}
+                  >
+                    4. 3D Depth Map
+                  </button>
+                </div>
+              </div>
+
+              {/* Inspector Body: Viewer + Telemetry */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                {/* Left: Interactive Frame Viewport */}
+                <div className="lg:col-span-7 relative h-72 md:h-96 rounded-2xl overflow-hidden border border-slate-800 bg-slate-950 flex items-center justify-center group shadow-inner">
+                  {inspectorView === "raw" && (
+                    <img
+                      src={getAssetUrl("/gallery/road-defect.png")}
+                      alt="Raw Road Surface"
+                      className="w-full h-full object-cover transition-all"
+                    />
+                  )}
+                  {inspectorView === "yolo" && (
+                    <img
+                      src={getAssetUrl("/gallery/ai-detection-overlay.jpg")}
+                      alt="YOLOv8 Detection Overlay"
+                      className="w-full h-full object-cover transition-all"
+                    />
+                  )}
+                  {inspectorView === "unet" && (
+                    <img
+                      src={getAssetUrl("/gallery/segmentation-mask.png")}
+                      alt="U-Net Segmentation Mask"
+                      className="w-full h-full object-cover transition-all"
+                    />
+                  )}
+                  {inspectorView === "depth" && (
+                    <div className="relative w-full h-full overflow-hidden">
+                      <img
+                        src={getAssetUrl("/gallery/segmentation-mask.png")}
+                        alt="Depth Map Heatmap"
+                        className="w-full h-full object-cover filter contrast-150 hue-rotate-180"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-red-600/30 via-amber-500/20 to-blue-600/30 mix-blend-overlay pointer-events-none" />
+                      <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-cyan-400/80 shadow-[0_0_8px_#22d3ee] animate-pulse" />
+                    </div>
+                  )}
+
+                  {/* Corner Viewfinder Crosshairs */}
+                  <div className="absolute top-3 left-3 w-4 h-4 border-t-2 border-l-2 border-orange-500/80 pointer-events-none" />
+                  <div className="absolute top-3 right-3 w-4 h-4 border-t-2 border-r-2 border-orange-500/80 pointer-events-none" />
+                  <div className="absolute bottom-3 left-3 w-4 h-4 border-b-2 border-l-2 border-orange-500/80 pointer-events-none" />
+                  <div className="absolute bottom-3 right-3 w-4 h-4 border-b-2 border-r-2 border-orange-500/80 pointer-events-none" />
+
+                  {/* Overlay Stage Badge */}
+                  <div className="absolute bottom-4 left-4 px-3 py-1 rounded-lg bg-slate-950/85 backdrop-blur-md border border-slate-800 text-[11px] font-mono text-orange-400 flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+                    {inspectorView === "raw" && "CAMERA MONOCULAR 4K STREAM · EXPOSURE: 1/1000s"}
+                    {inspectorView === "yolo" && "YOLOv8-m TILED INFERENCE · CONFIDENCE: 94.6% · 85 FPS"}
+                    {inspectorView === "unet" && "U-NET RESNET-34 MASK · FOCAL LOSS 0.082 · IoU: 88.4%"}
+                    {inspectorView === "depth" && "DEPTH ANYTHING V2 · METRIC RESOLUTION: 0.1cm"}
+                  </div>
+                </div>
+
+                {/* Right: Technical Telemetry Readout */}
+                <div className="lg:col-span-5 space-y-4">
+                  <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-3 font-mono text-xs">
+                    <div className="flex items-center justify-between pb-2 border-b border-slate-800/80">
+                      <span className="text-slate-400 uppercase tracking-wider text-[10px]">Defect Classification</span>
+                      <span className="font-bold text-orange-400">Pothole (ASTM Severity 3)</span>
+                    </div>
+                    <div className="flex items-center justify-between pb-2 border-b border-slate-800/80">
+                      <span className="text-slate-400 uppercase tracking-wider text-[10px]">Detection Model</span>
+                      <span className="text-slate-200">YOLOv8-m + CLAHE Tiling</span>
+                    </div>
+                    <div className="flex items-center justify-between pb-2 border-b border-slate-800/80">
+                      <span className="text-slate-400 uppercase tracking-wider text-[10px]">Segmented Area</span>
+                      <span className="text-emerald-400 font-bold">1.48 m² (+15% Saw-Cut Boundary)</span>
+                    </div>
+                    <div className="flex items-center justify-between pb-2 border-b border-slate-800/80">
+                      <span className="text-slate-400 uppercase tracking-wider text-[10px]">Metric Sag Depth</span>
+                      <span className="text-sky-400 font-bold">7.4 cm (Max) · 5.8 cm (Mean)</span>
+                    </div>
+                    <div className="flex items-center justify-between pb-2 border-b border-slate-800/80">
+                      <span className="text-slate-400 uppercase tracking-wider text-[10px]">Material Requirement</span>
+                      <span className="text-amber-400 font-bold">~0.26 Tonnes Asphalt Concrete</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-slate-400 uppercase tracking-wider text-[10px]">Risk Urgency Index</span>
+                      <span className="px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 text-[10px] font-bold border border-red-500/30">
+                        HIGH (0.87 / 1.0) · Within 48 Hrs
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="p-4 rounded-2xl bg-orange-500/5 border border-orange-500/20 text-xs text-slate-300 leading-relaxed">
+                    <strong className="text-orange-400 block mb-1 font-mono">Module Synergistic Feedback:</strong>
+                    Detection boxes from Module 01 guide the U-Net polygon crop in Module 02. Metric depth informs Module 03 volumetric cubic capacity to generate automated procurement specs under RDA standards.
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {/* Gallery Item 1 */}
               <div className="glass-panel rounded-2xl overflow-hidden border border-slate-800 group hover:border-orange-500/40 transition-all duration-300 flex flex-col">
@@ -1446,71 +1653,131 @@ export default function HomePage() {
             {/* 4 Group Members Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
               {/* Member 1: Amasha Nethmi */}
-              <div className="glass-panel p-6 rounded-2xl border border-slate-800 hover:border-orange-500/40 transition-all duration-300 text-center flex flex-col items-center">
-                <div className="w-20 h-20 rounded-full bg-gradient-to-tr from-orange-500 to-amber-500 p-0.5 mb-4 shadow-lg shadow-orange-500/20">
-                  <div className="w-full h-full rounded-full bg-slate-900 flex items-center justify-center font-mono font-bold text-orange-400 text-lg">
-                    AN
+              <div className="glass-panel rounded-2xl border border-slate-800 hover:border-orange-500/50 transition-all duration-300 overflow-hidden flex flex-col group hover:shadow-2xl hover:shadow-orange-500/10">
+                <div className="relative w-full h-80 sm:h-96 bg-slate-950 flex items-center justify-center overflow-hidden">
+                  <img
+                    src={getAssetUrl("/team/amasha-nethmi.jpeg")}
+                    alt="Amasha Nethmi"
+                    className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent opacity-90" />
+                  <span className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-slate-950/80 backdrop-blur-md text-[10px] font-mono font-semibold text-orange-400 border border-orange-500/30">
+                    Module 01 Lead
+                  </span>
+                </div>
+                <div className="p-5 flex-1 flex flex-col justify-between -mt-6 relative z-10">
+                  <div>
+                    <h4 className="font-bold text-slate-100 text-lg group-hover:text-orange-400 transition-colors">
+                      Amasha Nethmi
+                    </h4>
+                    <div className="text-xs font-mono text-orange-400 mt-0.5 mb-2 font-semibold">
+                      IT22082756
+                    </div>
+                    <p className="text-xs text-slate-300 leading-relaxed mb-4">
+                      AI-Based Road Defect Detection & Risk Assessment
+                    </p>
+                  </div>
+                  <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px] font-mono text-slate-400">
+                    <span>Perception AI</span>
+                    <span className="text-orange-400 font-semibold">SLIIT IT</span>
                   </div>
                 </div>
-                <h4 className="font-bold text-slate-100 text-base">Amasha Nethmi</h4>
-                <div className="text-xs font-mono text-orange-400 mt-1 mb-2">IT22082756</div>
-                <p className="text-xs text-slate-400 leading-relaxed mb-4">
-                  AI-Based Road Defect Detection & Risk Assessment
-                </p>
-                <span className="mt-auto px-2.5 py-1 rounded-full bg-slate-900 text-[10px] font-mono text-slate-300 border border-slate-800">
-                  Module 01 Lead
-                </span>
               </div>
 
               {/* Member 2: Lakshitha Walallawita */}
-              <div className="glass-panel p-6 rounded-2xl border border-slate-800 hover:border-emerald-500/40 transition-all duration-300 text-center flex flex-col items-center">
-                <div className="w-20 h-20 rounded-full bg-gradient-to-tr from-emerald-500 to-teal-500 p-0.5 mb-4 shadow-lg shadow-emerald-500/20">
-                  <div className="w-full h-full rounded-full bg-slate-900 flex items-center justify-center font-mono font-bold text-emerald-400 text-lg">
-                    LW
+              <div className="glass-panel rounded-2xl border border-slate-800 hover:border-emerald-500/50 transition-all duration-300 overflow-hidden flex flex-col group hover:shadow-2xl hover:shadow-emerald-500/10">
+                <div className="relative w-full h-80 sm:h-96 bg-slate-950 flex items-center justify-center overflow-hidden">
+                  <img
+                    src={getAssetUrl("/team/lakshitha-walallawita.jpeg")}
+                    alt="Lakshitha Walallawita"
+                    className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent opacity-90" />
+                  <span className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-slate-950/80 backdrop-blur-md text-[10px] font-mono font-semibold text-emerald-400 border border-emerald-500/30">
+                    Module 02 Lead
+                  </span>
+                </div>
+                <div className="p-5 flex-1 flex flex-col justify-between -mt-6 relative z-10">
+                  <div>
+                    <h4 className="font-bold text-slate-100 text-lg group-hover:text-emerald-400 transition-colors">
+                      Lakshitha Walallawita
+                    </h4>
+                    <div className="text-xs font-mono text-emerald-400 mt-0.5 mb-2 font-semibold">
+                      IT22252340
+                    </div>
+                    <p className="text-xs text-slate-300 leading-relaxed mb-4">
+                      AI-Based Repair Area Estimation & Semantic Segmentation
+                    </p>
+                  </div>
+                  <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px] font-mono text-slate-400">
+                    <span>Segmentation AI</span>
+                    <span className="text-emerald-400 font-semibold">SLIIT IT</span>
                   </div>
                 </div>
-                <h4 className="font-bold text-slate-100 text-base">Lakshitha Walallawita</h4>
-                <div className="text-xs font-mono text-emerald-400 mt-1 mb-2">IT22252340</div>
-                <p className="text-xs text-slate-400 leading-relaxed mb-4">
-                  AI-Based Repair Area Estimation & Semantic Segmentation
-                </p>
-                <span className="mt-auto px-2.5 py-1 rounded-full bg-slate-900 text-[10px] font-mono text-slate-300 border border-slate-800">
-                  Module 02 Lead
-                </span>
               </div>
 
               {/* Member 3: Chamara Nuwan */}
-              <div className="glass-panel p-6 rounded-2xl border border-slate-800 hover:border-sky-500/40 transition-all duration-300 text-center flex flex-col items-center">
-                <div className="w-20 h-20 rounded-full bg-gradient-to-tr from-sky-500 to-blue-500 p-0.5 mb-4 shadow-lg shadow-sky-500/20">
-                  <div className="w-full h-full rounded-full bg-slate-900 flex items-center justify-center font-mono font-bold text-sky-400 text-lg">
-                    CN
+              <div className="glass-panel rounded-2xl border border-slate-800 hover:border-sky-500/50 transition-all duration-300 overflow-hidden flex flex-col group hover:shadow-2xl hover:shadow-sky-500/10">
+                <div className="relative w-full h-80 sm:h-96 bg-slate-950 flex items-center justify-center overflow-hidden">
+                  <img
+                    src={getAssetUrl("/team/chamara-nuwan.jpeg")}
+                    alt="Chamara Nuwan"
+                    className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent opacity-90" />
+                  <span className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-slate-950/80 backdrop-blur-md text-[10px] font-mono font-semibold text-sky-400 border border-sky-500/30">
+                    Module 03 Lead
+                  </span>
+                </div>
+                <div className="p-5 flex-1 flex flex-col justify-between -mt-6 relative z-10">
+                  <div>
+                    <h4 className="font-bold text-slate-100 text-lg group-hover:text-sky-400 transition-colors">
+                      Chamara Nuwan
+                    </h4>
+                    <div className="text-xs font-mono text-sky-400 mt-0.5 mb-2 font-semibold">
+                      IT22113122
+                    </div>
+                    <p className="text-xs text-slate-300 leading-relaxed mb-4">
+                      Automated Material Requirement & Heat Estimation
+                    </p>
+                  </div>
+                  <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px] font-mono text-slate-400">
+                    <span>Thermal Estimator</span>
+                    <span className="text-sky-400 font-semibold">SLIIT IT</span>
                   </div>
                 </div>
-                <h4 className="font-bold text-slate-100 text-base">Chamara Nuwan</h4>
-                <div className="text-xs font-mono text-sky-400 mt-1 mb-2">IT22113122</div>
-                <p className="text-xs text-slate-400 leading-relaxed mb-4">
-                  Automated Material Requirement & Heat Estimation
-                </p>
-                <span className="mt-auto px-2.5 py-1 rounded-full bg-slate-900 text-[10px] font-mono text-slate-300 border border-slate-800">
-                  Module 03 Lead
-                </span>
               </div>
 
               {/* Member 4: Venuja Geenodh */}
-              <div className="glass-panel p-6 rounded-2xl border border-slate-800 hover:border-purple-500/40 transition-all duration-300 text-center flex flex-col items-center">
-                <div className="w-20 h-20 rounded-full bg-gradient-to-tr from-purple-500 to-pink-500 p-0.5 mb-4 shadow-lg shadow-purple-500/20">
-                  <div className="w-full h-full rounded-full bg-slate-900 flex items-center justify-center font-mono font-bold text-purple-400 text-lg">
-                    VG
+              <div className="glass-panel rounded-2xl border border-slate-800 hover:border-purple-500/50 transition-all duration-300 overflow-hidden flex flex-col group hover:shadow-2xl hover:shadow-purple-500/10">
+                <div className="relative w-full h-80 sm:h-96 bg-slate-950 flex items-center justify-center overflow-hidden">
+                  <img
+                    src={getAssetUrl("/team/venuja-geenodh.jpeg")}
+                    alt="Venuja Geenodh"
+                    className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent opacity-90" />
+                  <span className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-slate-950/80 backdrop-blur-md text-[10px] font-mono font-semibold text-purple-400 border border-purple-500/30">
+                    Module 04 Lead
+                  </span>
+                </div>
+                <div className="p-5 flex-1 flex flex-col justify-between -mt-6 relative z-10">
+                  <div>
+                    <h4 className="font-bold text-slate-100 text-lg group-hover:text-purple-400 transition-colors">
+                      Venuja Geenodh
+                    </h4>
+                    <div className="text-xs font-mono text-purple-400 mt-0.5 mb-2 font-semibold">
+                      IT22207968
+                    </div>
+                    <p className="text-xs text-slate-300 leading-relaxed mb-4">
+                      Environmental & Traffic-Aware Repair Scheduling
+                    </p>
+                  </div>
+                  <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px] font-mono text-slate-400">
+                    <span>NSGA-II Scheduling</span>
+                    <span className="text-purple-400 font-semibold">SLIIT IT</span>
                   </div>
                 </div>
-                <h4 className="font-bold text-slate-100 text-base">Venuja Geenodh</h4>
-                <div className="text-xs font-mono text-purple-400 mt-1 mb-2">IT22207968</div>
-                <p className="text-xs text-slate-400 leading-relaxed mb-4">
-                  Environmental & Traffic-Aware Repair Scheduling
-                </p>
-                <span className="mt-auto px-2.5 py-1 rounded-full bg-slate-900 text-[10px] font-mono text-slate-300 border border-slate-800">
-                  Module 04 Lead
-                </span>
               </div>
             </div>
 
@@ -1546,13 +1813,13 @@ export default function HomePage() {
           <div className="flex items-center gap-3">
             <Image
               src={getAssetUrl("/branding/logo_white.png")}
-              alt="Road Inspector AI"
+              alt="Road Inspectors"
               width={28}
               height={28}
               className="object-contain"
             />
             <div>
-              <span className="font-bold text-slate-200">Road Inspector AI</span>
+              <span className="font-bold text-slate-200">Road Inspectors</span>
               <span className="text-slate-500 ml-2">© 2026 SLIIT PP1 Research Project</span>
             </div>
           </div>
