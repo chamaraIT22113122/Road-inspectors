@@ -50,6 +50,9 @@ function GithubIcon({ className = "w-4 h-4" }: { className?: string }) {
   );
 }
 
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+const getAssetUrl = (path: string) => `${basePath}${path}`;
+
 export default function HomePage() {
   const [theme, setTheme] = useState<"dark" | "light">("dark");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -1332,48 +1335,48 @@ export default function HomePage() {
                 {
                   title: "TAF Report",
                   subtitle: "Topic Assessment Form (R26-IT-023)",
-                  file: "/docs/taf-report.pdf",
+                  file: getAssetUrl("/docs/taf-report.pdf"),
                   badge: "OFFICIAL TAF"
                 },
                 {
                   title: "Proposal Document: AI Road Defect Detection & Repair Estimation",
                   subtitle: "Comprehensive 4-Module Research Proposal",
-                  file: "/docs/proposal-document.pdf",
+                  file: getAssetUrl("/docs/proposal-document.pdf"),
                   badge: "PROPOSAL DOC"
                 },
                 {
                   title: "IEEE 6-Page Conference Research Paper",
                   subtitle: "Peer-Review Academic Conference Manuscript",
-                  file: "/docs/ieee-research-paper.pdf",
+                  file: getAssetUrl("/docs/ieee-research-paper.pdf"),
                   badge: "IEEE PAPER"
                 },
                 {
                   title: "Progress Presentation 01",
                   subtitle: "PP1 Mid-Term Milestone Defense Slides",
-                  file: "/docs/progress-presentation-01.pdf",
+                  file: getAssetUrl("/docs/progress-presentation-01.pdf"),
                   badge: "PRESENTATION 01"
                 },
                 {
                   title: "Progress Presentation 02",
                   subtitle: "PP2 Final Implementation & Model Defense",
-                  file: "/docs/progress-presentation-02.pdf",
+                  file: getAssetUrl("/docs/progress-presentation-02.pdf"),
                   badge: "PRESENTATION 02"
                 },
                 {
                   title: "Expert Consultation & Validation Report (2 Pages)",
                   subtitle: "Industry & Academic Civil Engineering Verification",
-                  file: "/gallery/expert-validation-pg1.jpeg",
+                  file: getAssetUrl("/gallery/expert-validation-pg1.jpeg"),
                   isImage: true,
                   images: [
-                    "/gallery/expert-validation-pg1.jpeg",
-                    "/gallery/expert-validation-pg2.jpeg"
+                    getAssetUrl("/gallery/expert-validation-pg1.jpeg"),
+                    getAssetUrl("/gallery/expert-validation-pg2.jpeg")
                   ],
                   badge: "VALIDATION"
                 },
                 {
                   title: "Road Inspector Official Research Poster",
                   subtitle: "High-Resolution Academic Symposium Poster",
-                  file: "/gallery/research-poster.png",
+                  file: getAssetUrl("/gallery/research-poster.png"),
                   isImage: true,
                   badge: "RESEARCH POSTER"
                 }

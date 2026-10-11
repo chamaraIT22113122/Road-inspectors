@@ -1,7 +1,11 @@
 import type { NextConfig } from "next";
 
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || (process.env.GITHUB_ACTIONS === "true" ? "/Road-inspectors" : "");
+
 const nextConfig: NextConfig = {
   output: "export",
+  basePath: basePath || undefined,
+  assetPrefix: basePath ? `${basePath}/` : undefined,
   images: {
     unoptimized: true,
   },
@@ -11,3 +15,4 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
+
