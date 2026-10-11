@@ -1643,7 +1643,7 @@ export default function HomePage() {
                 <span>The Minds Behind the Research</span>
               </div>
               <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-slate-100 mb-4">
-                Research Team & <span className="text-orange-500">Supervision</span>
+                Research <span className="text-orange-500">Team</span>
               </h2>
               <p className="text-base md:text-lg text-slate-300 font-normal leading-relaxed">
                 Undergraduate researchers at the Sri Lanka Institute of Information Technology (SLIIT) Faculty of Computing.

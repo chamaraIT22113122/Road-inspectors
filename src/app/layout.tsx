@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
-const basePath = process.env.NEXT_PUBLIC_BASE_PATH || (process.env.GITHUB_ACTIONS === "true" ? "/Road-inspectors" : "");
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
 export const metadata: Metadata = {
-  title: "Road Inspector AI | Intelligent Infrastructure Decision Support System",
+  title: "Road Inspectors | Intelligent Infrastructure Decision Support System",
   description: "An AI, Computer Vision and IoT-powered platform for road defect detection, semantic repair area segmentation, material estimation, and traffic-aware scheduling for Sri Lankan road networks.",
   keywords: [
     "Road Inspector AI",
