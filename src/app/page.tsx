@@ -244,7 +244,7 @@ export default function HomePage() {
           <a href="#" className="flex items-center gap-3" aria-label="Road Inspector AI Home">
             <div className="relative w-9 h-9 rounded-full overflow-hidden border border-orange-500/40 p-0.5 bg-slate-900">
               <Image
-                src="/branding/logo_white.png"
+                src={getAssetUrl("/branding/logo_white.png")}
                 alt="Road Inspector AI Logo"
                 width={36}
                 height={36}
@@ -1061,7 +1061,7 @@ export default function HomePage() {
               <div className="glass-panel rounded-2xl overflow-hidden border border-slate-800 group hover:border-orange-500/40 transition-all duration-300 flex flex-col">
                 <div className="relative h-56 w-full overflow-hidden bg-slate-950">
                   <Image
-                    src="/gallery/field-data-collection.jpg"
+                    src={getAssetUrl("/gallery/field-data-collection.jpg")}
                     alt="Field Data Collection in Sri Lanka"
                     fill
                     className="object-cover group-hover:scale-105 transition-transform duration-500"
@@ -1085,7 +1085,7 @@ export default function HomePage() {
               <div className="glass-panel rounded-2xl overflow-hidden border border-slate-800 group hover:border-orange-500/40 transition-all duration-300 flex flex-col">
                 <div className="relative h-56 w-full overflow-hidden bg-slate-950">
                   <Image
-                    src="/gallery/ai-detection-overlay.jpg"
+                    src={getAssetUrl("/gallery/ai-detection-overlay.jpg")}
                     alt="AI Detection Overlay"
                     fill
                     className="object-cover group-hover:scale-105 transition-transform duration-500"
@@ -1109,7 +1109,7 @@ export default function HomePage() {
               <div className="glass-panel rounded-2xl overflow-hidden border border-slate-800 group hover:border-orange-500/40 transition-all duration-300 flex flex-col">
                 <div className="relative h-56 w-full overflow-hidden bg-slate-950">
                   <Image
-                    src="/gallery/dashboard.jpg"
+                    src={getAssetUrl("/gallery/dashboard.jpg")}
                     alt="Road Inspector Command Dashboard"
                     fill
                     className="object-cover group-hover:scale-105 transition-transform duration-500"
@@ -1133,7 +1133,7 @@ export default function HomePage() {
               <div className="glass-panel rounded-2xl overflow-hidden border border-slate-800 group hover:border-orange-500/40 transition-all duration-300 flex flex-col">
                 <div className="relative h-56 w-full overflow-hidden bg-slate-950">
                   <Image
-                    src="/gallery/road-defect.png"
+                    src={getAssetUrl("/gallery/road-defect.png")}
                     alt="Road Defect Close-Up"
                     fill
                     className="object-cover group-hover:scale-105 transition-transform duration-500"
@@ -1157,7 +1157,7 @@ export default function HomePage() {
               <div className="glass-panel rounded-2xl overflow-hidden border border-slate-800 group hover:border-orange-500/40 transition-all duration-300 flex flex-col">
                 <div className="relative h-56 w-full overflow-hidden bg-slate-950">
                   <Image
-                    src="/gallery/segmentation-mask.png"
+                    src={getAssetUrl("/gallery/segmentation-mask.png")}
                     alt="Pixel-Level Segmentation Mask"
                     fill
                     className="object-cover group-hover:scale-105 transition-transform duration-500"
@@ -1181,7 +1181,7 @@ export default function HomePage() {
               <div className="glass-panel rounded-2xl overflow-hidden border border-slate-800 group hover:border-orange-500/40 transition-all duration-300 flex flex-col">
                 <div className="relative h-56 w-full overflow-hidden bg-slate-950">
                   <Image
-                    src="/gallery/model-comparison.png"
+                    src={getAssetUrl("/gallery/model-comparison.png")}
                     alt="Model Comparison Benchmark Chart"
                     fill
                     className="object-cover group-hover:scale-105 transition-transform duration-500"
@@ -1545,7 +1545,7 @@ export default function HomePage() {
         <div className="container mx-auto px-4 md:px-6 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-3">
             <Image
-              src="/branding/logo_white.png"
+              src={getAssetUrl("/branding/logo_white.png")}
               alt="Road Inspector AI"
               width={28}
               height={28}
