@@ -27,18 +27,34 @@ import {
   Radio,
   Clock,
   Compass,
-  Award,
-  Eye,
-  Download,
-  ChevronLeft,
-  Search,
-  Copy,
-  Check,
-  Flame,
-  Thermometer,
-  SlidersHorizontal,
-  Play
+  Award
 } from "lucide-react";
+import VisionInspector from "@/components/VisionInspector";
+import DocumentSection from "@/components/DocumentSection";
+import BackToTop from "@/components/BackToTop";
+import SiteVisitGallery from "@/components/SiteVisitGallery";
+
+function CountUpNumber({ end, decimals = 0, suffix = "" }: { end: number; decimals?: number; suffix?: string }) {
+  const [value, setValue] = useState(0);
+
+  useEffect(() => {
+    let startTime: number | null = null;
+    const duration = 1400;
+    const step = (timestamp: number) => {
+      if (!startTime) startTime = timestamp;
+      const progress = Math.min((timestamp - startTime) / duration, 1);
+      const eased = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+      setValue(eased * end);
+      if (progress < 1) {
+        requestAnimationFrame(step);
+      }
+    };
+    const animId = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(animId);
+  }, [end]);
+
+  return <span>{value.toFixed(decimals).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}{suffix}</span>;
+}
 
 function GithubIcon({ className = "w-4 h-4" }: { className?: string }) {
   return (
@@ -67,34 +83,6 @@ export default function HomePage() {
   const [pipelineStep, setPipelineStep] = useState<number>(0);
   const [scrollProgress, setScrollProgress] = useState<number>(0);
 
-  // Interactive AI Vision Inspector Playground State
-  const [inspectorView, setInspectorView] = useState<"raw" | "yolo" | "unet" | "depth">("yolo");
-
-  // Live Thermodynamic Asphalt & CIDA SCA/5 Cost Calculator State
-  const [calcArea, setCalcArea] = useState<number>(4.5);
-  const [calcDepth, setCalcDepth] = useState<number>(6.0);
-  const [calcDistance, setCalcDistance] = useState<number>(18);
-  const [calcAmbientTemp, setCalcAmbientTemp] = useState<number>(31);
-
-  // Document Filtering & Search
-  const [docFilter, setDocFilter] = useState<"all" | "papers" | "presentations" | "reports">("all");
-  const [docSearchQuery, setDocSearchQuery] = useState<string>("");
-
-  // Citation Modal State
-  const [citationModalOpen, setCitationModalOpen] = useState<boolean>(false);
-  const [citationCopied, setCitationCopied] = useState<boolean>(false);
-
-  const [selectedDoc, setSelectedDoc] = useState<{
-    title: string;
-    subtitle: string;
-    file: string;
-    isImage?: boolean;
-    images?: string[];
-    badge?: string;
-    category?: "papers" | "presentations" | "reports";
-  } | null>(null);
-  const [activeSlideIndex, setActiveSlideIndex] = useState<number>(0);
-
   useEffect(() => {
     const handleScroll = () => {
       const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
@@ -107,6 +95,16 @@ export default function HomePage() {
   }, []);
 
   useEffect(() => {
+    const savedTheme = localStorage.getItem("road_inspector_theme") as "dark" | "light" | null;
+    const prefersLight = typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: light)").matches;
+    const target = savedTheme || (prefersLight ? "light" : "dark");
+    if (target !== "dark") {
+      const id = requestAnimationFrame(() => setTheme(target));
+      return () => cancelAnimationFrame(id);
+    }
+  }, []);
+
+  useEffect(() => {
     const root = document.documentElement;
     if (theme === "dark") {
       root.classList.add("dark");
@@ -115,6 +113,7 @@ export default function HomePage() {
       root.classList.add("light");
       root.classList.remove("dark");
     }
+    localStorage.setItem("road_inspector_theme", theme);
   }, [theme]);
 
   const toggleTheme = () => {
@@ -322,12 +321,13 @@ export default function HomePage() {
               <span>AI Inspector</span>
             </a>
             <a
-              href="#calculator"
+              href="#site-visits"
               className="rounded-full px-3.5 py-1.5 text-sm font-medium text-slate-300 transition-colors hover:bg-orange-500/10 hover:text-orange-400 flex items-center gap-1"
             >
-              <Calculator className="w-3.5 h-3.5 text-orange-400" />
-              <span>Cost Calculator</span>
+              <Camera className="w-3.5 h-3.5 text-orange-400" />
+              <span>Site Visits</span>
             </a>
+
             <a
               href="#compliance"
               className="rounded-full px-3.5 py-1.5 text-sm font-medium text-slate-300 transition-colors hover:bg-orange-500/10 hover:text-orange-400"
@@ -403,10 +403,20 @@ export default function HomePage() {
             <a
               href="#gallery"
               onClick={() => setMobileMenuOpen(false)}
-              className="text-sm font-medium text-slate-300 hover:text-orange-400"
+              className="text-sm font-medium text-slate-300 hover:text-orange-400 flex items-center gap-2"
             >
-              Gallery
+              <Sparkles className="w-4 h-4 text-orange-400" />
+              <span>AI Inspector &amp; Visuals</span>
             </a>
+            <a
+              href="#site-visits"
+              onClick={() => setMobileMenuOpen(false)}
+              className="text-sm font-medium text-slate-300 hover:text-orange-400 flex items-center gap-2"
+            >
+              <Camera className="w-4 h-4 text-orange-400" />
+              <span>Site Visits (23 Field Photos)</span>
+            </a>
+
             <a
               href="#compliance"
               onClick={() => setMobileMenuOpen(false)}
@@ -493,19 +503,27 @@ export default function HomePage() {
                 {/* Key Metrics Counter Strip */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-6 border-t border-slate-800/80">
                   <div>
-                    <div className="text-2xl font-bold font-mono text-orange-400">92.4%</div>
+                    <div className="text-2xl font-bold font-mono text-orange-400">
+                      <CountUpNumber end={92.4} decimals={1} suffix="%" />
+                    </div>
                     <div className="text-[11px] text-slate-400 font-medium">YOLOv8 mAP@50</div>
                   </div>
                   <div>
-                    <div className="text-2xl font-bold font-mono text-emerald-400">89.2%</div>
+                    <div className="text-2xl font-bold font-mono text-emerald-400">
+                      <CountUpNumber end={89.2} decimals={1} suffix="%" />
+                    </div>
                     <div className="text-[11px] text-slate-400 font-medium">U-Net Dice Coeff</div>
                   </div>
                   <div>
-                    <div className="text-2xl font-bold font-mono text-sky-400">99.9%</div>
+                    <div className="text-2xl font-bold font-mono text-sky-400">
+                      <CountUpNumber end={99.9} decimals={1} suffix="%" />
+                    </div>
                     <div className="text-[11px] text-slate-400 font-medium">Material Model R²</div>
                   </div>
                   <div>
-                    <div className="text-2xl font-bold font-mono text-purple-400">10,000</div>
+                    <div className="text-2xl font-bold font-mono text-purple-400">
+                      <CountUpNumber end={10000} decimals={0} />
+                    </div>
                     <div className="text-[11px] text-slate-400 font-medium">Monte Carlo Runs</div>
                   </div>
                 </div>
@@ -1103,165 +1121,7 @@ export default function HomePage() {
             </div>
 
             {/* Interactive AI Perception & Depth Inspector Playground */}
-            <div className="glass-panel p-6 md:p-8 rounded-3xl border border-orange-500/30 mb-16 relative overflow-hidden bg-gradient-to-b from-slate-900/90 to-slate-950/90 shadow-2xl">
-              <div className="flex flex-wrap items-center justify-between gap-4 mb-6 pb-6 border-b border-slate-800">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-orange-500/10 border border-orange-500/30 flex items-center justify-center text-orange-400">
-                    <Camera className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl md:text-2xl font-extrabold text-slate-100 flex items-center gap-2">
-                      Interactive AI Vision & Depth Inspector
-                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-orange-500/20 text-orange-400 border border-orange-500/30">
-                        LIVE DEMO
-                      </span>
-                    </h3>
-                    <p className="text-xs text-slate-400 font-mono">
-                      Switch through active neural inference stages on a real Sri Lankan pavement defect sample
-                    </p>
-                  </div>
-                </div>
-
-                {/* View Switcher Tabs */}
-                <div className="flex flex-wrap items-center gap-2 bg-slate-950 p-1.5 rounded-2xl border border-slate-800">
-                  <button
-                    type="button"
-                    onClick={() => setInspectorView("raw")}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-mono font-semibold transition-all ${
-                      inspectorView === "raw"
-                        ? "bg-gradient-to-r from-orange-600 to-amber-600 text-white shadow-md shadow-orange-500/20"
-                        : "text-slate-400 hover:text-slate-200"
-                    }`}
-                  >
-                    1. Raw RGB Frame
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setInspectorView("yolo")}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-mono font-semibold transition-all ${
-                      inspectorView === "yolo"
-                        ? "bg-gradient-to-r from-orange-600 to-amber-600 text-white shadow-md shadow-orange-500/20"
-                        : "text-slate-400 hover:text-slate-200"
-                    }`}
-                  >
-                    2. YOLOv8 Detection
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setInspectorView("unet")}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-mono font-semibold transition-all ${
-                      inspectorView === "unet"
-                        ? "bg-gradient-to-r from-orange-600 to-amber-600 text-white shadow-md shadow-orange-500/20"
-                        : "text-slate-400 hover:text-slate-200"
-                    }`}
-                  >
-                    3. U-Net Mask
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setInspectorView("depth")}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-mono font-semibold transition-all ${
-                      inspectorView === "depth"
-                        ? "bg-gradient-to-r from-orange-600 to-amber-600 text-white shadow-md shadow-orange-500/20"
-                        : "text-slate-400 hover:text-slate-200"
-                    }`}
-                  >
-                    4. 3D Depth Map
-                  </button>
-                </div>
-              </div>
-
-              {/* Inspector Body: Viewer + Telemetry */}
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-                {/* Left: Interactive Frame Viewport */}
-                <div className="lg:col-span-7 relative h-72 md:h-96 rounded-2xl overflow-hidden border border-slate-800 bg-slate-950 flex items-center justify-center group shadow-inner">
-                  {inspectorView === "raw" && (
-                    <img
-                      src={getAssetUrl("/gallery/road-defect.png")}
-                      alt="Raw Road Surface"
-                      className="w-full h-full object-cover transition-all"
-                    />
-                  )}
-                  {inspectorView === "yolo" && (
-                    <img
-                      src={getAssetUrl("/gallery/ai-detection-overlay.jpg")}
-                      alt="YOLOv8 Detection Overlay"
-                      className="w-full h-full object-cover transition-all"
-                    />
-                  )}
-                  {inspectorView === "unet" && (
-                    <img
-                      src={getAssetUrl("/gallery/segmentation-mask.png")}
-                      alt="U-Net Segmentation Mask"
-                      className="w-full h-full object-cover transition-all"
-                    />
-                  )}
-                  {inspectorView === "depth" && (
-                    <div className="relative w-full h-full overflow-hidden">
-                      <img
-                        src={getAssetUrl("/gallery/segmentation-mask.png")}
-                        alt="Depth Map Heatmap"
-                        className="w-full h-full object-cover filter contrast-150 hue-rotate-180"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-red-600/30 via-amber-500/20 to-blue-600/30 mix-blend-overlay pointer-events-none" />
-                      <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-cyan-400/80 shadow-[0_0_8px_#22d3ee] animate-pulse" />
-                    </div>
-                  )}
-
-                  {/* Corner Viewfinder Crosshairs */}
-                  <div className="absolute top-3 left-3 w-4 h-4 border-t-2 border-l-2 border-orange-500/80 pointer-events-none" />
-                  <div className="absolute top-3 right-3 w-4 h-4 border-t-2 border-r-2 border-orange-500/80 pointer-events-none" />
-                  <div className="absolute bottom-3 left-3 w-4 h-4 border-b-2 border-l-2 border-orange-500/80 pointer-events-none" />
-                  <div className="absolute bottom-3 right-3 w-4 h-4 border-b-2 border-r-2 border-orange-500/80 pointer-events-none" />
-
-                  {/* Overlay Stage Badge */}
-                  <div className="absolute bottom-4 left-4 px-3 py-1 rounded-lg bg-slate-950/85 backdrop-blur-md border border-slate-800 text-[11px] font-mono text-orange-400 flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
-                    {inspectorView === "raw" && "CAMERA MONOCULAR 4K STREAM · EXPOSURE: 1/1000s"}
-                    {inspectorView === "yolo" && "YOLOv8-m TILED INFERENCE · CONFIDENCE: 94.6% · 85 FPS"}
-                    {inspectorView === "unet" && "U-NET RESNET-34 MASK · FOCAL LOSS 0.082 · IoU: 88.4%"}
-                    {inspectorView === "depth" && "DEPTH ANYTHING V2 · METRIC RESOLUTION: 0.1cm"}
-                  </div>
-                </div>
-
-                {/* Right: Technical Telemetry Readout */}
-                <div className="lg:col-span-5 space-y-4">
-                  <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-3 font-mono text-xs">
-                    <div className="flex items-center justify-between pb-2 border-b border-slate-800/80">
-                      <span className="text-slate-400 uppercase tracking-wider text-[10px]">Defect Classification</span>
-                      <span className="font-bold text-orange-400">Pothole (ASTM Severity 3)</span>
-                    </div>
-                    <div className="flex items-center justify-between pb-2 border-b border-slate-800/80">
-                      <span className="text-slate-400 uppercase tracking-wider text-[10px]">Detection Model</span>
-                      <span className="text-slate-200">YOLOv8-m + CLAHE Tiling</span>
-                    </div>
-                    <div className="flex items-center justify-between pb-2 border-b border-slate-800/80">
-                      <span className="text-slate-400 uppercase tracking-wider text-[10px]">Segmented Area</span>
-                      <span className="text-emerald-400 font-bold">1.48 m² (+15% Saw-Cut Boundary)</span>
-                    </div>
-                    <div className="flex items-center justify-between pb-2 border-b border-slate-800/80">
-                      <span className="text-slate-400 uppercase tracking-wider text-[10px]">Metric Sag Depth</span>
-                      <span className="text-sky-400 font-bold">7.4 cm (Max) · 5.8 cm (Mean)</span>
-                    </div>
-                    <div className="flex items-center justify-between pb-2 border-b border-slate-800/80">
-                      <span className="text-slate-400 uppercase tracking-wider text-[10px]">Material Requirement</span>
-                      <span className="text-amber-400 font-bold">~0.26 Tonnes Asphalt Concrete</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-slate-400 uppercase tracking-wider text-[10px]">Risk Urgency Index</span>
-                      <span className="px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 text-[10px] font-bold border border-red-500/30">
-                        HIGH (0.87 / 1.0) · Within 48 Hrs
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="p-4 rounded-2xl bg-orange-500/5 border border-orange-500/20 text-xs text-slate-300 leading-relaxed">
-                    <strong className="text-orange-400 block mb-1 font-mono">Module Synergistic Feedback:</strong>
-                    Detection boxes from Module 01 guide the U-Net polygon crop in Module 02. Metric depth informs Module 03 volumetric cubic capacity to generate automated procurement specs under RDA standards.
-                  </div>
-                </div>
-              </div>
-            </div>
+            <VisionInspector getAssetUrl={getAssetUrl} />
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {/* Gallery Item 1 */}
@@ -1404,12 +1264,40 @@ export default function HomePage() {
                       Empirical evaluation demonstrating YOLOv8/v10 superiority in real-time frame rates (85 FPS) while preserving 0.91 mAP@50 accuracy.
                     </p>
                   </div>
-                  <span className="text-[10px] font-mono text-slate-400 mt-4 block">Automated Research Audit</span>
                 </div>
               </div>
             </div>
+
+            {/* Quick Link to Field Audit Gallery */}
+            <div className="mt-12 p-6 rounded-2xl glass-panel border border-orange-500/30 flex flex-col sm:flex-row items-center justify-between gap-4 bg-gradient-to-r from-orange-500/10 via-slate-950 to-amber-500/10">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-orange-500/20 text-orange-400 flex items-center justify-center shrink-0 border border-orange-500/30">
+                  <Camera className="w-5 h-5" />
+                </div>
+                <div>
+                  <h4 className="text-sm font-bold text-slate-100">Looking for Real Road Inspection Ground Truth?</h4>
+                  <p className="text-xs text-slate-400 font-mono">Explore all 23 High-Resolution Field Ground Truth Observations across Sri Lankan arterial networks</p>
+                </div>
+              </div>
+              <a
+                href="#site-visits"
+                className="px-4 py-2 rounded-xl bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white text-xs font-mono font-bold transition-all flex items-center gap-2 shadow-lg shadow-orange-500/20 shrink-0"
+              >
+                <span>Browse 23 Site Visits</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </a>
+            </div>
           </div>
         </section>
+
+        {/* SITE VISITS & ROAD INSPECTION GALLERY SECTION */}
+        <section id="site-visits" className="py-24 relative bg-slate-950 border-t border-slate-800/80">
+          <div className="container mx-auto px-4 md:px-6">
+            <SiteVisitGallery getAssetUrl={getAssetUrl} />
+          </div>
+        </section>
+
+
 
         {/* COMPLIANCE & RESEARCH VERIFICATION SECTION */}
         <section id="compliance" className="py-24 relative bg-slate-950 border-t border-slate-800/80">
@@ -1521,119 +1409,7 @@ export default function HomePage() {
         </section>
 
         {/* PROJECT DOCUMENTS SECTION */}
-        <section id="documents" className="py-24 relative bg-slate-950 border-t border-slate-800/80">
-          <div className="container mx-auto px-4 md:px-6">
-            <div className="text-center max-w-3xl mx-auto mb-16">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-500/10 text-orange-400 text-xs font-mono font-semibold uppercase tracking-wider mb-4 border border-orange-500/20">
-                <span>Research Documentation & Publications</span>
-              </div>
-              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-slate-100 mb-4">
-                Project <span className="text-orange-500">Documents</span>
-              </h2>
-              <div className="w-20 h-1 bg-gradient-to-r from-orange-500 to-amber-500 mx-auto rounded-full mb-6" />
-              <p className="text-sm md:text-base text-slate-300 font-normal leading-relaxed">
-                Download or view our research documentation, publications, engineering validation reports, and presentations.
-              </p>
-            </div>
-
-            {/* Documents 4-Column Card Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-              {[
-                {
-                  title: "TAF Report",
-                  subtitle: "Topic Assessment Form (R26-IT-023)",
-                  file: getAssetUrl("/docs/taf-report.pdf"),
-                  badge: "OFFICIAL TAF"
-                },
-                {
-                  title: "Proposal Document: AI Road Defect Detection & Repair Estimation",
-                  subtitle: "Comprehensive 4-Module Research Proposal",
-                  file: getAssetUrl("/docs/proposal-document.pdf"),
-                  badge: "PROPOSAL DOC"
-                },
-                {
-                  title: "IEEE 6-Page Conference Research Paper",
-                  subtitle: "Peer-Review Academic Conference Manuscript",
-                  file: getAssetUrl("/docs/ieee-research-paper.pdf"),
-                  badge: "IEEE PAPER"
-                },
-                {
-                  title: "Progress Presentation 01",
-                  subtitle: "PP1 Mid-Term Milestone Defense Slides",
-                  file: getAssetUrl("/docs/progress-presentation-01.pdf"),
-                  badge: "PRESENTATION 01"
-                },
-                {
-                  title: "Progress Presentation 02",
-                  subtitle: "PP2 Final Implementation & Model Defense",
-                  file: getAssetUrl("/docs/progress-presentation-02.pdf"),
-                  badge: "PRESENTATION 02"
-                },
-                {
-                  title: "Expert Consultation & Validation Report (2 Pages)",
-                  subtitle: "Industry & Academic Civil Engineering Verification",
-                  file: getAssetUrl("/gallery/expert-validation-pg1.jpeg"),
-                  isImage: true,
-                  images: [
-                    getAssetUrl("/gallery/expert-validation-pg1.jpeg"),
-                    getAssetUrl("/gallery/expert-validation-pg2.jpeg")
-                  ],
-                  badge: "VALIDATION"
-                },
-                {
-                  title: "Road Inspector Official Research Poster",
-                  subtitle: "High-Resolution Academic Symposium Poster",
-                  file: getAssetUrl("/gallery/research-poster.png"),
-                  isImage: true,
-                  badge: "RESEARCH POSTER"
-                }
-              ].map((doc, idx) => (
-                <div
-                  key={idx}
-                  className="rounded-2xl p-6 border border-orange-500/20 bg-orange-950/10 hover:border-orange-500/50 hover:bg-orange-950/20 transition-all duration-300 flex flex-col justify-between group shadow-lg shadow-orange-950/10 glass-panel"
-                >
-                  <div>
-                    {/* Top Document Icon Circle */}
-                    <div className="w-14 h-14 rounded-full bg-orange-500/10 border border-orange-500/30 flex items-center justify-center mx-auto mb-6 text-orange-400 group-hover:scale-110 transition-transform">
-                      <FileText className="w-6 h-6" />
-                    </div>
-
-                    {/* Document Title */}
-                    <h3 className="text-center font-bold text-slate-100 text-sm leading-snug mb-2 min-h-[40px] flex items-center justify-center">
-                      {doc.title}
-                    </h3>
-                    <p className="text-center text-[11px] text-slate-400 mb-6 font-mono">
-                      {doc.subtitle}
-                    </p>
-                  </div>
-
-                  {/* Buttons Row */}
-                  <div className="flex items-center gap-2 pt-2 border-t border-orange-500/15">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setSelectedDoc(doc);
-                        setActiveSlideIndex(0);
-                      }}
-                      className="flex-1 py-2 px-3 rounded-lg bg-slate-900/90 hover:bg-slate-800 text-slate-200 border border-slate-800 hover:border-orange-500/40 text-xs font-mono font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer"
-                    >
-                      <Eye className="w-3.5 h-3.5 text-orange-400" />
-                      <span>View</span>
-                    </button>
-                    <a
-                      href={doc.file}
-                      download
-                      className="flex-1 py-2 px-3 rounded-lg bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white font-bold text-xs font-mono flex items-center justify-center gap-1.5 transition-all shadow-md shadow-orange-500/20"
-                    >
-                      <Download className="w-3.5 h-3.5" />
-                      <span>{doc.isImage ? "IMG" : "PDF"}</span>
-                    </a>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
+        <DocumentSection getAssetUrl={getAssetUrl} />
 
         {/* TEAM & SUPERVISORS SECTION */}
         <section id="team" className="py-24 relative bg-slate-900/30 border-t border-slate-800/80">
@@ -1850,143 +1626,8 @@ export default function HomePage() {
         </div>
       </footer>
 
-      {/* DOCUMENT PREVIEW MODAL POPUP */}
-      {selectedDoc && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-200">
-          <div
-            className="relative w-full max-w-5xl h-[90vh] bg-slate-900 border border-orange-500/40 rounded-3xl shadow-2xl flex flex-col overflow-hidden glass-panel"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Modal Header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800 bg-slate-950/60">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-orange-500/10 border border-orange-500/30 flex items-center justify-center text-orange-400">
-                  <FileText className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-slate-100 text-sm md:text-base leading-tight">
-                    {selectedDoc.title}
-                  </h3>
-                  <p className="text-[11px] text-slate-400 font-mono">
-                    {selectedDoc.subtitle}
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <a
-                  href={selectedDoc.file}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-mono font-semibold border border-slate-700 transition-colors"
-                >
-                  <ExternalLink className="w-3.5 h-3.5 text-orange-400" />
-                  <span>Open in Tab</span>
-                </a>
-                <a
-                  href={selectedDoc.file}
-                  download
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white text-xs font-mono font-bold transition-all shadow-md shadow-orange-500/20"
-                >
-                  <Download className="w-3.5 h-3.5" />
-                  <span>Download</span>
-                </a>
-                <button
-                  type="button"
-                  onClick={() => setSelectedDoc(null)}
-                  className="w-8 h-8 rounded-lg bg-slate-800/80 hover:bg-red-500/20 hover:text-red-400 text-slate-400 flex items-center justify-center transition-colors border border-slate-700 hover:border-red-500/30"
-                  aria-label="Close modal"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-
-            {/* Modal Body: Embedded Viewer */}
-            <div className="flex-1 bg-slate-950 p-2 sm:p-4 overflow-hidden flex flex-col items-center justify-center relative">
-              {selectedDoc.isImage ? (
-                selectedDoc.images && selectedDoc.images.length > 1 ? (
-                  <div className="relative w-full h-full flex flex-col items-center justify-center">
-                    {/* Active Slide Image */}
-                    <div className="relative flex-1 w-full flex items-center justify-center overflow-auto p-2">
-                      <img
-                        src={selectedDoc.images[activeSlideIndex]}
-                        alt={`${selectedDoc.title} - Page ${activeSlideIndex + 1}`}
-                        className="max-h-full max-w-full object-contain rounded-xl shadow-2xl border border-slate-800 transition-opacity duration-300"
-                      />
-                    </div>
-
-                    {/* Slider Navigation Bar */}
-                    <div className="flex items-center justify-between w-full max-w-md px-4 py-2 mt-2 bg-slate-900/90 border border-slate-800 rounded-full backdrop-blur-md">
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setActiveSlideIndex((prev) =>
-                            prev > 0 ? prev - 1 : selectedDoc.images!.length - 1
-                          )
-                        }
-                        className="p-2 rounded-full hover:bg-orange-500/20 text-slate-300 hover:text-orange-400 transition-colors flex items-center gap-1 text-xs font-mono"
-                        aria-label="Previous Slide"
-                      >
-                        <ChevronLeft className="w-4 h-4" />
-                        <span className="hidden sm:inline">Prev</span>
-                      </button>
-
-                      {/* Dot Indicators */}
-                      <div className="flex items-center gap-2">
-                        {selectedDoc.images.map((_, i) => (
-                          <button
-                            key={i}
-                            type="button"
-                            onClick={() => setActiveSlideIndex(i)}
-                            className={`transition-all rounded-full ${
-                              activeSlideIndex === i
-                                ? "w-6 h-2 bg-gradient-to-r from-orange-500 to-amber-500 shadow-md shadow-orange-500/30"
-                                : "w-2 h-2 bg-slate-700 hover:bg-slate-500"
-                            }`}
-                            aria-label={`Go to slide ${i + 1}`}
-                          />
-                        ))}
-                        <span className="text-[11px] font-mono text-slate-400 ml-2">
-                          {activeSlideIndex + 1} / {selectedDoc.images.length}
-                        </span>
-                      </div>
-
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setActiveSlideIndex((prev) =>
-                            prev < selectedDoc.images!.length - 1 ? prev + 1 : 0
-                          )
-                        }
-                        className="p-2 rounded-full hover:bg-orange-500/20 text-slate-300 hover:text-orange-400 transition-colors flex items-center gap-1 text-xs font-mono"
-                        aria-label="Next Slide"
-                      >
-                        <span className="hidden sm:inline">Next</span>
-                        <ChevronRight className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="relative w-full h-full flex items-center justify-center overflow-auto">
-                    <img
-                      src={selectedDoc.file}
-                      alt={selectedDoc.title}
-                      className="max-h-full max-w-full object-contain rounded-xl shadow-lg border border-slate-800"
-                    />
-                  </div>
-                )
-              ) : (
-                <iframe
-                  src={`${selectedDoc.file}#toolbar=1&navpanes=0`}
-                  title={selectedDoc.title}
-                  className="w-full h-full rounded-xl border border-slate-800 bg-white"
-                />
-              )}
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Back to top floating button */}
+      <BackToTop />
     </div>
   );
 }
