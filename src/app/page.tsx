@@ -33,6 +33,7 @@ import VisionInspector from "@/components/VisionInspector";
 import DocumentSection from "@/components/DocumentSection";
 import BackToTop from "@/components/BackToTop";
 import SiteVisitGallery from "@/components/SiteVisitGallery";
+import ContactSection from "@/components/ContactSection";
 
 function CountUpNumber({ end, decimals = 0, suffix = "" }: { end: number; decimals?: number; suffix?: string }) {
   const [value, setValue] = useState(0);
@@ -346,6 +347,12 @@ export default function HomePage() {
             >
               Team
             </a>
+            <a
+              href="#contact"
+              className="rounded-full px-3.5 py-1.5 text-sm font-medium text-slate-300 transition-colors hover:bg-sky-500/10 hover:text-sky-400"
+            >
+              Contact
+            </a>
           </nav>
 
           {/* Action buttons */}
@@ -437,6 +444,13 @@ export default function HomePage() {
               className="text-sm font-medium text-slate-300 hover:text-orange-400"
             >
               Team
+            </a>
+            <a
+              href="#contact"
+              onClick={() => setMobileMenuOpen(false)}
+              className="text-sm font-medium text-slate-300 hover:text-sky-400"
+            >
+              Contact
             </a>
           </div>
         )}
@@ -1581,6 +1595,9 @@ export default function HomePage() {
             </div>
           </div>
         </section>
+
+        {/* CONTACT RESEARCH GROUP SECTION */}
+        <ContactSection />
       </main>
 
       {/* FOOTER */}
@@ -1612,6 +1629,9 @@ export default function HomePage() {
             </a>
             <a href="#compliance" className="hover:text-orange-400 transition-colors">
               Compliance
+            </a>
+            <a href="#contact" className="hover:text-sky-400 transition-colors">
+              Contact
             </a>
             <a
               href="https://github.com/chamaraIT22113122/road-inspector"
